@@ -57,6 +57,8 @@ target_compile_definitions(fakemote PRIVATE
     FAKEMOTE_MINOR=${FAKEMOTE_MINOR}
     FAKEMOTE_PATCH=${FAKEMOTE_PATCH}
     FAKEMOTE_HASH=${FAKEMOTE_HASH}
+    LOG_DEBUG=EGC_DEBUG
+    
 )
 
 target_link_libraries(fakemote PRIVATE
