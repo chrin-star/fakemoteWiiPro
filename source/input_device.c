@@ -207,10 +207,16 @@ int input_device_set_leds(input_device_t *input_device, int leds)
     return egc_input_device_set_leds(input_device->device, leds);
 }
 
+
 int input_device_set_rumble(input_device_t *input_device, bool rumble_on)
 {
-    return egc_input_device_set_rumble(input_device->device,
-                                       rumble_on ? EGC_RUMBLE_MAX : EGC_RUMBLE_OFF);
+    u16 intensity = rumble_on ? 0xffff : 0;
+
+    return egc_input_device_set_rumble(
+        input_device->device,
+        intensity,
+        intensity
+    );
 }
 
 bool input_device_report_input(input_device_t *input_device)
