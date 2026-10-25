@@ -70,3 +70,19 @@ char *strcpy(char *s1, const char *s2)
         ;
     return s1;
 }
+
+int strncmp(const char *s1, const char *s2, size_t n)
+{
+    for (size_t i = 0; i < n; i++) {
+        unsigned char a = (unsigned char)s1[i];
+        unsigned char b = (unsigned char)s2[i];
+
+        if (a != b)
+            return a - b;
+
+        if (a == '\0')
+            return 0;
+    }
+
+    return 0;
+}
