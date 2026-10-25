@@ -34,8 +34,16 @@ jobs:
           wget https://raw.githubusercontent.com/Leseratte10/d2xl-cios/master/stripios/main.cpp
           g++ main.cpp -o stripios
           mv stripios ${DEVKITPRO}/tools/bin
+      
       - name: Configure
-        run: cmake --preset ${{ matrix.build_type }} -DWITH_BLUETOOTH=OFF -DWITH_DRIVER_NINTENDO_SWITCH=ON
+        run: >-
+          cmake --preset ${{ matrix.build_type }}
+          -DWITH_BLUETOOTH=OFF
+          -DWITH_DRIVER_DS3=OFF
+          -DWITH_DRIVER_DS4=OFF
+          -DWITH_DRIVER_GENERIC=OFF
+          -DWITH_GENERIC_MAPPINGS=OFF
+          -DWITH_DRIVER_NINTENDO_SWITCH=ON
       - name: Build
         run: cmake --build --preset ${{ matrix.build_type }}
       - uses: actions/upload-artifact@v4
