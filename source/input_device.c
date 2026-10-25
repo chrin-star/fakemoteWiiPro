@@ -222,20 +222,25 @@ int input_device_set_rumble(input_device_t *input_device, bool rumble_on)
 bool input_device_report_input(input_device_t *input_device)
 {
     const egc_input_state_t *input = &input_device->device->state;
+    u32 buttons = input->gamepad.buttons;
+    if (input->gamepad.axes[EGC_GAMEPAD_AXIS_LEFT_TRIGGER] > 0)
+        buttons |= BIT(EGC_GAMEPAD_BUTTON_LEFT_TRIGGER);
+    if (input->gamepad.axes[EGC_GAMEPAD_AXIS_RIGHT_TRIGGER] > 0)
+        buttons |= BIT(EGC_GAMEPAD_BUTTON_RIGHT_TRIGGER);
     fake_wiimote_t *wiimote = input_device->assigned_wiimote;
     u16 wiimote_buttons = 0;
     union wiimote_extension_data_t extension_data;
     struct ir_dot_t ir_dots[IR_MAX_DOTS];
     enum bm_ir_emulation_mode_e ir_emu_mode;
 
-    if (bm_check_switch_mapping(input->gamepad.buttons, &input_device->switch_mapping,
+    if (bm_check_switch_mapping(buttons, &input_device->switch_mapping,
                                 input_device->switch_mapping_combo)) {
         input_device->extension = input_device->extension == WIIMOTE_EXT_NUNCHUK
                                       ? WIIMOTE_EXT_CLASSIC
                                       : WIIMOTE_EXT_NUNCHUK;
         fake_wiimote_set_extension(wiimote, input_device->extension);
         return false;
-    } else if (bm_check_switch_mapping(input->gamepad.buttons, &input_device->switch_ir_emu_mode,
+    } else if (bm_check_switch_mapping(buttons, &input_device->switch_ir_emu_mode,
                                        input_device->switch_ir_emu_mode_combo)) {
         input_device->ir_emu_mode_idx =
             (input_device->ir_emu_mode_idx + 1) % ARRAY_SIZE(ir_emu_modes);
@@ -249,7 +254,7 @@ bool input_device_report_input(input_device_t *input_device)
     }
 
     if (input_device->extension == WIIMOTE_EXT_NUNCHUK) {
-        bm_map_wiimote(EGC_GAMEPAD_BUTTON_COUNT, input->gamepad.buttons,
+        bm_map_wiimote(EGC_GAMEPAD_BUTTON_COUNT, buttons,
                        input_mappings.wiimote_button_map, &wiimote_buttons);
     }
 
@@ -277,13 +282,13 @@ bool input_device_report_input(input_device_t *input_device)
     if (input_device->extension == WIIMOTE_EXT_NONE) {
         fake_wiimote_report_input(wiimote, wiimote_buttons);
     } else if (input_device->extension == WIIMOTE_EXT_NUNCHUK) {
-        bm_map_nunchuk(EGC_GAMEPAD_BUTTON_COUNT, input->gamepad.buttons, EGC_GAMEPAD_AXIS_COUNT,
+        bm_map_nunchuk(EGC_GAMEPAD_BUTTON_COUNT, buttons, EGC_GAMEPAD_AXIS_COUNT,
                        input->gamepad.axes, 0, 0, 0, input_mappings.nunchuk_button_map,
                        input_mappings.nunchuk_analog_axis_map, &extension_data.nunchuk);
         fake_wiimote_report_input_ext(wiimote, wiimote_buttons, &extension_data,
                                       sizeof(extension_data.nunchuk));
     } else if (input_device->extension == WIIMOTE_EXT_CLASSIC) {
-        bm_map_classic(EGC_GAMEPAD_BUTTON_COUNT, input->gamepad.buttons, EGC_GAMEPAD_AXIS_COUNT,
+        bm_map_classic(EGC_GAMEPAD_BUTTON_COUNT, buttons, EGC_GAMEPAD_AXIS_COUNT,
                        input->gamepad.axes, input_mappings.classic_button_map,
                        input_mappings.classic_analog_axis_map, &extension_data.classic);
         fake_wiimote_report_input_ext(wiimote, wiimote_buttons, &extension_data,
