@@ -5,13 +5,16 @@ permissions:
   contents: read
   packages: read
 
+
 on:
   push:
     branches:
       - "main"
+      - "switch-pro-usb-experimental"
   pull_request:
     branches:
       - "main"
+  workflow_dispatch:
 
 jobs:
   build:
