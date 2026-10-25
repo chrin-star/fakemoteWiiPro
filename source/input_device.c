@@ -48,8 +48,8 @@ static const struct {
 		[EGC_GAMEPAD_BUTTON_DPAD_RIGHT] = CLASSIC_CTRL_BUTTON_RIGHT,
 		[EGC_GAMEPAD_BUTTON_START] = CLASSIC_CTRL_BUTTON_PLUS,
 		[EGC_GAMEPAD_BUTTON_BACK] = CLASSIC_CTRL_BUTTON_MINUS,
-        [EGC_GAMEPAD_BUTTON_RIGHT_TRIGGER] = CLASSIC_CTRL_BUTTON_ZR,
-        [EGC_GAMEPAD_BUTTON_LEFT_TRIGGER] = CLASSIC_CTRL_BUTTON_ZL,
+        [EGC_GAMEPAD_BUTTON_RIGHT_PADDLE1] = CLASSIC_CTRL_BUTTON_ZR,
+        [EGC_GAMEPAD_BUTTON_LEFT_PADDLE1] = CLASSIC_CTRL_BUTTON_ZL,
 		[EGC_GAMEPAD_BUTTON_RIGHT_SHOULDER] = CLASSIC_CTRL_BUTTON_FULL_R,
 		[EGC_GAMEPAD_BUTTON_LEFT_SHOULDER] = CLASSIC_CTRL_BUTTON_FULL_L,
 		[EGC_GAMEPAD_BUTTON_LEFT_STICK] = CLASSIC_CTRL_BUTTON_HOME,
@@ -224,9 +224,9 @@ bool input_device_report_input(input_device_t *input_device)
     const egc_input_state_t *input = &input_device->device->state;
     u32 buttons = input->gamepad.buttons;
     if (input->gamepad.axes[EGC_GAMEPAD_AXIS_LEFT_TRIGGER] > 0)
-        buttons |= BIT(EGC_GAMEPAD_BUTTON_LEFT_TRIGGER);
+        buttons |= BIT(EGC_GAMEPAD_BUTTON_LEFT_PADDLE1);
     if (input->gamepad.axes[EGC_GAMEPAD_AXIS_RIGHT_TRIGGER] > 0)
-        buttons |= BIT(EGC_GAMEPAD_BUTTON_RIGHT_TRIGGER);
+        buttons |= BIT(EGC_GAMEPAD_BUTTON_RIGHT_PADDLE1);
     fake_wiimote_t *wiimote = input_device->assigned_wiimote;
     u16 wiimote_buttons = 0;
     union wiimote_extension_data_t extension_data;
