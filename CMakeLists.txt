@@ -46,8 +46,10 @@ add_executable(fakemote
     source/conf.c
 )
 
+
 target_include_directories(fakemote PRIVATE
     include
+    embedded-game-controller/embedded-game-controller
 )
 
 target_compile_definitions(fakemote PRIVATE
