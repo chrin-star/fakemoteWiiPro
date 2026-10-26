@@ -115,8 +115,8 @@ void input_device_handle_added(egc_input_device_t *device, void *userdata)
             input_devices[i].device = device;
             /* No assigned fake Wiimote yet */
             input_devices[i].assigned_wiimote = NULL;
-            input_devices[i].reconnect_delay = 0;
-            input_devices[i].extension = WIIMOTE_EXT_NUNCHUK;
+            input_devices[i].reconnect_delay = 0;        
+            input_devices[i].extension = WIIMOTE_EXT_CLASSIC;
             input_devices[i].ir_emu_mode_idx = BM_IR_EMULATION_MODE_DIRECT;
 
             if (has_button(device, EGC_GAMEPAD_BUTTON_LEFT_STICK) &&
