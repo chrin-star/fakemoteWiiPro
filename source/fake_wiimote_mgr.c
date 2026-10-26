@@ -51,9 +51,11 @@ static inline void fake_wiimote_mgr_check_assign_input_devices(void)
 
         input_device = input_device_get_unassigned();
         if (input_device) {
-            input_device_assign_wiimote(input_device, &fake_wiimotes[i]);
-            fake_wiimote_init_state(&fake_wiimotes[i], input_device);
-            fake_wiimotes[i].active = true;
+            
+         input_device_assign_wiimote(input_device, &fake_wiimotes[i]);
+         fake_wiimote_init_state(&fake_wiimotes[i], input_device);
+         fake_wiimote_set_extension(&fake_wiimotes[i], WIIMOTE_EXT_CLASSIC);
+         fake_wiimotes[i].active = true;
         }
     }
 }
