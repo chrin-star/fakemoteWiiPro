@@ -47,7 +47,7 @@ jobs:
           assert count == 1, "0x3F mapping not found"
 
           
-       # Advertise the dedicated button in the Pro descriptor.
+          # Advertise the dedicated button in the Pro descriptor.
           old = """        BIT(EGC_GAMEPAD_BUTTON_SOUTH) |
           BIT(EGC_GAMEPAD_BUTTON_WEST) |"""
           new = """        BIT(EGC_GAMEPAD_BUTTON_SOUTH) |
