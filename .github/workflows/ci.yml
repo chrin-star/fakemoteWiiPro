@@ -47,14 +47,14 @@ jobs:
           assert count == 1, "0x3F mapping not found"
 
           
+          
           # Advertise the dedicated button in the Pro descriptor.
-          old = """        BIT(EGC_GAMEPAD_BUTTON_SOUTH) |
-          BIT(EGC_GAMEPAD_BUTTON_WEST) |"""
-          new = """        BIT(EGC_GAMEPAD_BUTTON_SOUTH) |
-          BIT(EGC_GAMEPAD_BUTTON_RIGHT_PADDLE2) |
-          BIT(EGC_GAMEPAD_BUTTON_WEST) |"""
+          old = "BIT(EGC_GAMEPAD_BUTTON_SOUTH) |"
+          new = """BIT(EGC_GAMEPAD_BUTTON_SOUTH) |
+          BIT(EGC_GAMEPAD_BUTTON_RIGHT_PADDLE2) |"""
           assert s.count(old) == 1, "Pro descriptor not found"
           s = s.replace(old, new, 1)
+
 
           p.write_text(s)
           print("Switch Pro B mapping and descriptor patch applied")
