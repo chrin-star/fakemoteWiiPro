@@ -59,6 +59,49 @@ jobs:
           PY
 
 
+      - name: Diagnose IOS57 USB backend
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("embedded-game-controller/embedded-game-controller/backends/ogc.c")
+          s = p.read_text()
+
+          old = '''    ret = os_open("/dev/usb/hid", 15);
+         if (ret < 0)
+         return ret;
+         host_fd = ret;'''
+
+          new = '''    ret = os_open("/dev/usb/hid", 15);
+          if (ret < 0) 
+    {
+        EGC_DEBUG("FAKEMOTE_DIAG: USB HID open failed: %d", ret);
+        return ret;
+    }
+    
+    EGC_DEBUG("FAKEMOTE_DIAG: USB HID opened: %d", ret);
+    host_fd = ret;'''
+
+          assert s.count(old) == 1, "USB initialization code changed"
+          s = s.replace(old, new, 1)
+
+          old = '''    if (ver[0] != 0x50001)
+        return IOS_EINVAL;'''
+
+          new = '''    EGC_DEBUG("FAKEMOTE_DIAG: USB HID version: 0x%08x", ver[0]);
+    if (ver[0] != 0x50001) {
+        EGC_DEBUG("FAKEMOTE_DIAG: Unsupported USB HID version");
+        return IOS_EINVAL;
+    }'''
+
+          assert s.count(old) == 1, "USB version check changed"
+          s = s.replace(old, new, 1)
+
+          p.write_text(s)
+          print("IOS57 USB diagnostic patch applied")
+          PY
+          
+
       - name: Install dependencies
         run: |
           apt-get update -y
