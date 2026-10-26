@@ -25,38 +25,31 @@ jobs:
           git -C embedded-game-controller checkout bb1b9832d887c3c2ca7ede5e873f525e1fef7d10
           git -C embedded-game-controller submodule update --init --recursive
           
+      
       - name: Diagnose Switch Pro physical B
         run: |
           python3 - <<'PY'
           from pathlib import Path
+          import re
 
           p = Path("embedded-game-controller/embedded-game-controller/hid_drivers/nintendo_switch.c")
           s = p.read_text()
 
-          # Report 0x30: physical B becomes START.
+          # Report 0x30
           old = "[NS_BUTTON_B] = EGC_GAMEPAD_BUTTON_SOUTH,"
           new = "[NS_BUTTON_B] = EGC_GAMEPAD_BUTTON_START,"
           assert s.count(old) == 1, "0x30 mapping not found"
           s = s.replace(old, new, 1)
 
-          # Report 0x3F: SOUTH becomes BACK.
-          
-          # Report 0x3F: SOUTH becomes BACK.
-          old = """EGC_GAMEPAD_BUTTON_NORTH,
-           EGC_GAMEPAD_BUTTON_WEST,
-      EGC_GAMEPAD_BUTTON_EAST,
-      EGC_GAMEPAD_BUTTON_SOUTH,"""
-          new = """EGC_GAMEPAD_BUTTON_NORTH,
-       EGC_GAMEPAD_BUTTON_WEST,
-       EGC_GAMEPAD_BUTTON_EAST,
-       EGC_GAMEPAD_BUTTON_BACK,"""
-          assert s.count(old) == 1, "0x3F mapping not found"
-          s = s.replace(old, new, 1)
-
+          # Report 0x3F
+          pattern = r"(EGC_GAMEPAD_BUTTON_NORTH,\s+EGC_GAMEPAD_BUTTON_WEST,\s+EGC_GAMEPAD_BUTTON_EAST,\s+)EGC_GAMEPAD_BUTTON_SOUTH,"
+          s, count = re.subn(pattern, r"\1EGC_GAMEPAD_BUTTON_BACK,", s, count=1)
+          assert count == 1, "0x3F mapping not found"
 
           p.write_text(s)
           print("Switch Pro B diagnostic patch applied")
           PY
+
           
       - name: Install dependencies
         run: |
