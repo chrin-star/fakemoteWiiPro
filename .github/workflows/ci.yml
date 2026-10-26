@@ -48,12 +48,16 @@ jobs:
 
           
           
-          # Advertise the dedicated button in the Pro descriptor.
+
+
+          # Add the dedicated B button to the Pro descriptor.
           old = "BIT(EGC_GAMEPAD_BUTTON_SOUTH) |"
-          new = """BIT(EGC_GAMEPAD_BUTTON_SOUTH) |
-          BIT(EGC_GAMEPAD_BUTTON_RIGHT_PADDLE2) |"""
+          new = old + "\n        BIT(EGC_GAMEPAD_BUTTON_RIGHT_PADDLE2) |"
           assert s.count(old) == 1, "Pro descriptor not found"
           s = s.replace(old, new, 1)
+
+
+
 
 
           p.write_text(s)
