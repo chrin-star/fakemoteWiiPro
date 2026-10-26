@@ -68,10 +68,17 @@ void bm_map_classic(
     }
 
     for (int i = 0; i < num_analog_axis; i++) {
-        if (classic_analog_axis_map[i])
-            classic_analog_axis[classic_analog_axis_map[i] - 1] = s16_to_u8(analog_axis[i]);
-    }
+        if (classic_analog_axis_map[i]) {
+        s16 value = analog_axis[i];
 
+        /* Invert only the left stick's vertical axis */
+        if (classic_analog_axis_map[i] == BM_CLASSIC_ANALOG_AXIS_LEFT_Y)
+            value = ~value;
+
+        classic_analog_axis[classic_analog_axis_map[i] - 1] = s16_to_u8(value);
+    }
+}
+    
     bm_classic_format(classic, classic_buttons, classic_analog_axis);
 }
 
