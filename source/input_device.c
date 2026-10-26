@@ -223,6 +223,9 @@ bool input_device_report_input(input_device_t *input_device)
 {
     const egc_input_state_t *input = &input_device->device->state;
     u32 buttons = input->gamepad.buttons;
+/* DIAGNOSTIC: use physical A to activate SOUTH */
+    if (buttons & BIT(EGC_GAMEPAD_BUTTON_EAST))
+        buttons |= BIT(EGC_GAMEPAD_BUTTON_SOUTH);
     if (input->gamepad.axes[EGC_GAMEPAD_AXIS_LEFT_TRIGGER] > 0)
         buttons |= BIT(EGC_GAMEPAD_BUTTON_LEFT_PADDLE1);
     if (input->gamepad.axes[EGC_GAMEPAD_AXIS_RIGHT_TRIGGER] > 0)
