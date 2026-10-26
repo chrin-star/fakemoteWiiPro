@@ -50,15 +50,18 @@ jobs:
           
 
 
-          # Add the dedicated B button to the Pro descriptor.
+          
+          # Modify only the Switch Pro descriptor.
+          start = s.index("s_device_description_pro =")
+          end = s.index(".available_axes =", start)
+          section = s[start:end]
+
           old = "BIT(EGC_GAMEPAD_BUTTON_SOUTH) |"
           new = old + "\n        BIT(EGC_GAMEPAD_BUTTON_RIGHT_PADDLE2) |"
-          assert s.count(old) == 1, "Pro descriptor not found"
-          s = s.replace(old, new, 1)
 
-
-
-
+          assert section.count(old) == 1
+          section = section.replace(old, new, 1)
+          s = s[:start] + section + s[end:]
 
           p.write_text(s)
           print("Switch Pro B mapping and descriptor patch applied")
