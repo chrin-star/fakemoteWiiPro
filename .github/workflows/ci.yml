@@ -58,7 +58,8 @@ jobs:
           print("Unmapped Switch Pro buttons fixed")
           PY
 
-      - name: Diagnose IOS57 USB backend
+      
+      - name: Test IOS57 USB HID fallback
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -67,26 +68,22 @@ jobs:
           s = p.read_text()
 
           old = '    ret = os_open("/dev/usb/hid", 15);'
+
           new = (
-              '    EGC_DEBUG("FAKEMOTE_DIAG: Opening USB HID");\n'
-              + old
+              '    ret = os_open("/dev/usb/hid", 15);\n'
+              '    if (ret < 0) {\n'
+              '        EGC_DEBUG("USB HID mode 15 failed: %d", ret);\n'
+              '        ret = os_open("/dev/usb/hid", 0);\n'
+              '    }'
           )
 
-          assert s.count(old) == 1, "USB initialization code changed"
-          s = s.replace(old, new, 1)
-
-          old = '    if (ver[0] != 0x50001)'
-          new = (
-              '    EGC_DEBUG("FAKEMOTE_DIAG: USB HID version: 0x%08x", ver[0]);\n'
-              + old
-          )
-
-          assert s.count(old) == 1, "USB version check changed"
+          assert s.count(old) == 1
           s = s.replace(old, new, 1)
 
           p.write_text(s)
-          print("IOS57 USB diagnostic patch applied")
+          print("USB HID fallback patch applied")
           PY
+
 
 
       - name: Install dependencies
