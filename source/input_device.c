@@ -38,9 +38,9 @@ static const struct {
 		[EGC_GAMEPAD_AXIS_LEFTY] = BM_NUNCHUK_ANALOG_AXIS_Y,
 	},
 	.classic_button_map = {
-        [EGC_GAMEPAD_BUTTON_NORTH] = CLASSIC_CTRL_BUTTON_X,
-        [EGC_GAMEPAD_BUTTON_EAST] = 0, /* TEST: disable physical A */
-        [EGC_GAMEPAD_BUTTON_SOUTH] = CLASSIC_CTRL_BUTTON_B,
+        [EGC_GAMEPAD_BUTTON_NORTH] = CLASSIC_CTRL_BUTTON_X,       
+        [EGC_GAMEPAD_BUTTON_EAST] = CLASSIC_CTRL_BUTTON_B, /* TEST */
+        [EGC_GAMEPAD_BUTTON_SOUTH] = 0, /* TEST */
         [EGC_GAMEPAD_BUTTON_WEST] = CLASSIC_CTRL_BUTTON_Y,
 		[EGC_GAMEPAD_BUTTON_DPAD_UP] = CLASSIC_CTRL_BUTTON_UP,
 		[EGC_GAMEPAD_BUTTON_DPAD_DOWN] = CLASSIC_CTRL_BUTTON_DOWN,
@@ -223,9 +223,6 @@ bool input_device_report_input(input_device_t *input_device)
 {
     const egc_input_state_t *input = &input_device->device->state;
     u32 buttons = input->gamepad.buttons;
-/* DIAGNOSTIC: use physical A to activate SOUTH */
-    if (buttons & BIT(EGC_GAMEPAD_BUTTON_EAST))
-        buttons |= BIT(EGC_GAMEPAD_BUTTON_SOUTH);
     if (input->gamepad.axes[EGC_GAMEPAD_AXIS_LEFT_TRIGGER] > 0)
         buttons |= BIT(EGC_GAMEPAD_BUTTON_LEFT_PADDLE1);
     if (input->gamepad.axes[EGC_GAMEPAD_AXIS_RIGHT_TRIGGER] > 0)
