@@ -84,6 +84,37 @@ jobs:
           print("USB HID fallback patch applied")
           PY
 
+
+      - name: Test disconnected USB transfer guard
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("embedded-game-controller/embedded-game-controller/backends/ogc.c")
+          s = p.read_text()
+
+          old = '''                    ogc_device_t *device = ogc_device_from_input_device(transfer->t.device);
+                      if (device->usb.dev_id != 0 && transfer->callback) {'''
+
+          anchor = '''                    ogc_device_t *device = ogc_device_from_input_device(transfer->t.device);
+                    if (device->usb.dev_id != 0 && transfer->callback) {'''
+
+          replacement = '''                    ogc_device_t *device = transfer->t.device
+                          ? ogc_device_from_input_device(transfer->t.device)
+                          : NULL;
+                    if (device &&
+                        PUB(device)->connection == EGC_CONNECTION_USB &&
+                        device->usb.dev_id != 0 &&
+                        transfer->callback) {'''
+
+          assert s.count(anchor) == 1, "USB reply block not found"
+          s = s.replace(anchor, replacement, 1)
+
+          p.write_text(s)
+          print("Disconnected USB transfer guard applied")
+          PY
+
+
       - name: Install dependencies
         run: |
           apt-get update -y
