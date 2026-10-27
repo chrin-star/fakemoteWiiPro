@@ -693,9 +693,8 @@ void fake_wiimote_tick(fake_wiimote_t *wiimote)
             if (ret == IOS_OK)
                 wiimote->baseband_state = BASEBAND_STATE_INACTIVE;
         }
-
-        
-    else if (wiimote->baseband_state == BASEBAND_STATE_COMPLETE) {
+    } else if (wiimote->baseband_state == BASEBAND_STATE_COMPLETE) 
+    {
         /* "If the connection originated from the device (Wiimote) it will create
          * HID control and interrupt channels (in that order)." */
         if (wiimote->acl_state == ACL_STATE_LINKING) {
