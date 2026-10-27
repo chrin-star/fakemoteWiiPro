@@ -77,7 +77,13 @@ void bm_map_classic(
            classic_analog_axis_map[i] == BM_CLASSIC_ANALOG_AXIS_RIGHT_Y)
             value = ~value;
 
+
+        /* Small center deadzone to prevent unwanted movement */
+        if (value >= -1638 && value <= 1638)
+            value = 0;
+
         classic_analog_axis[classic_analog_axis_map[i] - 1] = s16_to_u8(value);
+
     }
 }
     
