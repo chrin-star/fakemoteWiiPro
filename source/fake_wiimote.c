@@ -685,16 +685,15 @@ void fake_wiimote_tick(fake_wiimote_t *wiimote)
 {
     int ret;
 
+    if (wiimote->baseband_state == BASEBAND_STATE_REQUEST_CONNECTION) {
+        if (hci_can_request_connection()) {
+            ret = inject_hci_event_con_req(&wiimote->bdaddr, WIIMOTE_HCI_CLASS_0,
+                                           WIIMOTE_HCI_CLASS_1, WIIMOTE_HCI_CLASS_2, HCI_LINK_ACL);
+            /* After a connection request is visible to the controller switch to inactive */
+            if (ret == IOS_OK)
+                wiimote->baseband_state = BASEBAND_STATE_INACTIVE;
+        }
 
-    if (wiimote->baseband_state == BASEBAND_STATE_REQUEST_CONNECTION)
-    {
-        /* Experimental: request connection without waiting for page scan */
-        ret = inject_hci_event_con_req(&wiimote->bdaddr, WIIMOTE_HCI_CLASS_0,
-                                       WIIMOTE_HCI_CLASS_1, WIIMOTE_HCI_CLASS_2, HCI_LINK_ACL);
-        if (ret == IOS_OK)
-            wiimote->baseband_state = BASEBAND_STATE_INACTIVE;
-
-    } 
         
     else if (wiimote->baseband_state == BASEBAND_STATE_COMPLETE) {
         /* "If the connection originated from the device (Wiimote) it will create
