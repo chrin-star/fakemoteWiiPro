@@ -62,8 +62,9 @@ static inline void fake_wiimote_mgr_check_assign_input_devices(void)
 
 void fake_wiimote_mgr_tick_devices(void)
 {
-    if (hci_can_request_connection())
-        fake_wiimote_mgr_check_assign_input_devices();
+
+    /* Experimental: assign input devices without waiting for page scan */
+    fake_wiimote_mgr_check_assign_input_devices();
 
     for (int i = 0; i < MAX_FAKE_WIIMOTES; i++) {
         if (fake_wiimotes[i].active)
