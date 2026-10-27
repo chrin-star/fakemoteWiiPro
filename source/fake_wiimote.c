@@ -232,14 +232,31 @@ static inline void fake_wiimote_reset_extension_state(fake_wiimote_t *wiimote)
         bm_nunchuk_format(&ext.nunchuk, 0, analog_axis, 0, 0, 0);
         memcpy(ext_controller_data, &ext.nunchuk, sizeof(ext.nunchuk));
     } else if (wiimote->cur_extension == WIIMOTE_EXT_CLASSIC) {
-        u8 analog_axis[BM_CLASSIC_ANALOG_AXIS__NUM];
+    u8 analog_axis[BM_CLASSIC_ANALOG_AXIS__NUM];
 
-        for (int i = 0; i < ARRAY_SIZE(analog_axis); i++)
-            analog_axis[i] = 0x80;
+    for (int i = 0; i < ARRAY_SIZE(analog_axis); i++)
+        analog_axis[i] = 0x80;
 
-        bm_classic_format(&ext.classic, 0, analog_axis);
-        memcpy(ext_controller_data, &ext.classic, sizeof(ext.classic));
-    }
+    bm_classic_format(&ext.classic, 0, analog_axis);
+    memcpy(ext_controller_data, &ext.classic, sizeof(ext.classic));
+
+    /*
+     * Classic Controller calibration data at extension register 0x20.
+     * Four sticks: max, min, center.
+     */
+    static const u8 classic_calibration[0x10] = {
+        0xC0, 0x40, 0x80,
+        0xC0, 0x40, 0x80,
+        0xC0, 0x40, 0x80,
+        0xC0, 0x40, 0x80,
+        0x00, 0x00,
+        0x55, 0xAA
+    };
+
+    memcpy(wiimote->extension_regs.calibration1,
+           classic_calibration,
+           sizeof(classic_calibration));
+}
 }
 
 void fake_wiimote_init_state(fake_wiimote_t *wiimote, input_device_t *input_device)
