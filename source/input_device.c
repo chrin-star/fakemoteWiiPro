@@ -185,6 +185,9 @@ input_device_t *input_device_get_unassigned(void)
 void input_device_assign_wiimote(input_device_t *input_device, fake_wiimote_t *wiimote)
 {
     input_device->assigned_wiimote = wiimote;
+
+    /* Initialize the selected extension on the virtual Wiimote. */
+    fake_wiimote_set_extension(wiimote, input_device->extension);
 }
 
 void input_device_release_wiimote(input_device_t *input_device)
