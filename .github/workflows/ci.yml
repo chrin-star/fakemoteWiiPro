@@ -84,57 +84,6 @@ jobs:
           print("USB HID fallback patch applied")
           PY
 
-
-      - name: Test USB reconnect cleanup
-        run: |
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("embedded-game-controller/embedded-game-controller/backends/ogc.c")
-          s = p.read_text()
-
-          old = '''static void ogc_device_free(ogc_device_t *device)
-          {
-              PUB(device)->connection = EGC_CONNECTION_DISCONNECTED;'''
-
-          new = '''static void ogc_device_free(ogc_device_t *device)
-          {
-              /* Ignore callbacks from transfers belonging to a removed device. */
-              for (int i = 0; i < ARRAY_SIZE(s_transfers); i++) {
-                  if (s_transfers[i].t.device == PUB(device))
-                      s_transfers[i].callback = NULL;
-              }
-
-              PUB(device)->connection = EGC_CONNECTION_DISCONNECTED;'''
-
-          assert s.count(old) == 1, "Device cleanup anchor not found"
-          s = s.replace(old, new, 1)
-
-          old = '''                    ogc_device_t *device = ogc_device_from_input_device(transfer->t.device);
-                      if (device->usb.dev_id != 0 && transfer->callback) {'''
-
-          # Match the original source indentation independently.
-          anchor = '                    ogc_device_t *device = ogc_device_from_input_device(transfer->t.device);'
-          assert s.count(anchor) == 1, "Transfer reply anchor not found"
-
-          s = s.replace(
-              anchor,
-              '''                    ogc_device_t *device = transfer->t.device
-                          ? ogc_device_from_input_device(transfer->t.device)
-                          : NULL;''',
-              1
-          )
-
-          old = 'if (device->usb.dev_id != 0 && transfer->callback) {'
-          new = 'if (device && device->usb.dev_id != 0 && transfer->callback) {'
-          assert s.count(old) == 1, "Transfer callback anchor not found"
-          s = s.replace(old, new, 1)
-
-          p.write_text(s)
-          print("Experimental USB reconnect cleanup applied")
-          PY
-
-
       - name: Install dependencies
         run: |
           apt-get update -y
