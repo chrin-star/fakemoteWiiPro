@@ -85,6 +85,7 @@ jobs:
           PY
 
 
+
       - name: Test disconnected USB transfer guard
         run: |
           python3 - <<'PY'
@@ -93,26 +94,35 @@ jobs:
           p = Path("embedded-game-controller/embedded-game-controller/backends/ogc.c")
           s = p.read_text()
 
-          old = '''                    ogc_device_t *device = ogc_device_from_input_device(transfer->t.device);
-                      if (device->usb.dev_id != 0 && transfer->callback) {'''
+          anchor = "ogc_device_t *device = ogc_device_from_input_device(transfer->t.device);"
+          assert s.count(anchor) == 1, "USB device lookup not found uniquely"
 
-          anchor = '''                    ogc_device_t *device = ogc_device_from_input_device(transfer->t.device);
-                    if (device->usb.dev_id != 0 && transfer->callback) {'''
+          lines = s.splitlines()
+          index = next(i for i, line in enumerate(lines) if anchor in line)
+          indent = lines[index][:len(lines[index]) - len(lines[index].lstrip())]
 
-          replacement = '''                    ogc_device_t *device = transfer->t.device
-                          ? ogc_device_from_input_device(transfer->t.device)
-                          : NULL;
-                    if (device &&
-                        PUB(device)->connection == EGC_CONNECTION_USB &&
-                        device->usb.dev_id != 0 &&
-                        transfer->callback) {'''
+          lines[index:index + 1] = [
+              indent + "ogc_device_t *device = transfer->t.device",
+              indent + "    ? ogc_device_from_input_device(transfer->t.device)",
+              indent + "    : NULL;"
+          ]
 
-          assert s.count(anchor) == 1, "USB reply block not found"
-          s = s.replace(anchor, replacement, 1)
+          s = "\n".join(lines) + "\n"
+
+          old = "if (device->usb.dev_id != 0 && transfer->callback) {"
+          new = (
+              "if (device && "
+              "PUB(device)->connection == EGC_CONNECTION_USB && "
+              "device->usb.dev_id != 0 && transfer->callback) {"
+          )
+
+          assert s.count(old) == 1, "USB transfer condition not found uniquely"
+          s = s.replace(old, new, 1)
 
           p.write_text(s)
           print("Disconnected USB transfer guard applied")
           PY
+
 
 
       - name: Install dependencies
