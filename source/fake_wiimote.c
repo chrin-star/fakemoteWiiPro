@@ -591,6 +591,8 @@ static void fake_wiimote_process_write_request(fake_wiimote_t *wiimote,
         } else if (write->slave_address == CAMERA_I2C_ADDR) {
             if (!ir_camera_write_data(wiimote, write->data, write->address, write->size))
                 error = ERROR_CODE_NACK;
+        } else {
+            error = ERROR_CODE_NACK;
         }
         break;
     default:
