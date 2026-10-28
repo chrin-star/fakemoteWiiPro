@@ -135,8 +135,12 @@ void bm_map_ir_analog_axis(
             s16 val = analog_axis[i];
 
             if (mode == BM_IR_EMULATION_MODE_RELATIVE_ANALOG_AXIS) {
-                state->position[ir_analog_axis_map[i] - 1] += val / 16;
-            } else if (mode == BM_IR_EMULATION_MODE_ABSOLUTE_ANALOG_AXIS) {
+    /* Deadzone to prevent drift near the center */
+    if (val > -3000 && val < 3000)
+        val = 0;
+
+    state->position[ir_analog_axis_map[i] - 1] += val / 8192;
+} else if (mode == BM_IR_EMULATION_MODE_ABSOLUTE_ANALOG_AXIS) {
                 u16 center = (ir_analog_axis_map[i] == BM_IR_AXIS_X) ? IR_CENTER_X : IR_CENTER_Y;
                 state->position[ir_analog_axis_map[i] - 1] = center + val;
             }
