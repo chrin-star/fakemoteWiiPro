@@ -535,6 +535,8 @@ static bool fake_wiimote_process_read_request(fake_wiimote_t *wiimote)
         } else if (wiimote->read_request.slave_address == CAMERA_I2C_ADDR) {
             if (!ir_camera_read_data(wiimote, reply.data, address, read_size))
                 error = ERROR_CODE_NACK;
+        } else {
+            error = ERROR_CODE_NACK;
         }
         break;
     default:
