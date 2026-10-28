@@ -43,10 +43,16 @@ void bm_map_nunchuk(
     }
 
     for (int i = 0; i < num_analog_axis; i++) {
-        if (nunchuk_analog_axis_map[i])
-            nunchuk_analog_axis[nunchuk_analog_axis_map[i] - 1] = s16_to_u8(analog_axis[i]);
-    }
+    if (nunchuk_analog_axis_map[i]) {
+        s16 value = analog_axis[i];
 
+        /* Invert only the Nunchuk vertical axis */
+        if (nunchuk_analog_axis_map[i] == BM_NUNCHUK_ANALOG_AXIS_Y)
+            value = ~value;
+
+        nunchuk_analog_axis[nunchuk_analog_axis_map[i] - 1] = s16_to_u8(value);
+    }
+}
     bm_nunchuk_format(nunchuk, nunchuk_buttons, nunchuk_analog_axis, ax, ay, az);
 }
 
@@ -133,6 +139,10 @@ void bm_map_ir_analog_axis(
     for (int i = 0; i < num_analog_axis; i++) {
         if (ir_analog_axis_map[i]) {
             s16 val = analog_axis[i];
+
+    /* Invert only the IR pointer vertical axis */
+        if (ir_analog_axis_map[i] == BM_IR_AXIS_Y)
+           val = ~val;
 
             if (mode == BM_IR_EMULATION_MODE_RELATIVE_ANALOG_AXIS) {
     /* Deadzone to prevent drift near the center */
