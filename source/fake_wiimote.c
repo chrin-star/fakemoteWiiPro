@@ -471,6 +471,9 @@ static inline bool ir_camera_write_data(fake_wiimote_t *wiimote, const void *src
 
 static bool extension_read_data(fake_wiimote_t *wiimote, void *dst, u16 address, u16 size)
 {
+    if (wiimote->cur_extension == WIIMOTE_EXT_NONE)
+    return false;
+    
     if (address + size > sizeof(wiimote->extension_regs))
         return false;
 
@@ -492,6 +495,9 @@ static bool extension_read_data(fake_wiimote_t *wiimote, void *dst, u16 address,
 
 static bool extension_write_data(fake_wiimote_t *wiimote, const void *src, u16 address, u16 size)
 {
+    if (wiimote->cur_extension == WIIMOTE_EXT_NONE)
+    return false;
+    
     if (address + size > sizeof(wiimote->extension_regs))
         return false;
 
