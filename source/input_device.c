@@ -265,10 +265,7 @@ bool input_device_report_input(input_device_t *input_device)
         bm_map_wiimote(EGC_GAMEPAD_BUTTON_COUNT, buttons,
                        input_mappings.wiimote_button_map, &wiimote_buttons);
     }
-	    u16 wx = ACCEL_ZERO_G;
-        u16 wy = ACCEL_ZERO_G;
-        u16 wz = ACCEL_ONE_G;
-
+	    
         if (input_device->device->desc->num_accelerometers > 0) {
         /*
          * Convert EGC accelerometer values to Wii Remote scale.
@@ -283,21 +280,25 @@ bool input_device_report_input(input_device_t *input_device)
 
         const s32 scale = ACCEL_ONE_G - ACCEL_ZERO_G;
 
-        wx = ACCEL_ZERO_G +
-        ((s32)ax * scale) / EGC_ACCELEROMETER_RES_PER_G;
-       wy = ACCEL_ZERO_G +
-        ((s32)ay * scale) / EGC_ACCELEROMETER_RES_PER_G;
-       wz = ACCEL_ZERO_G +
-        ((s32)az * scale) / EGC_ACCELEROMETER_RES_PER_G;
+        s32 x = ACCEL_ZERO_G +
+            ((s32)ax * scale) / EGC_ACCELEROMETER_RES_PER_G;
+        s32 y = ACCEL_ZERO_G +
+            ((s32)ay * scale) / EGC_ACCELEROMETER_RES_PER_G;
+        s32 z = ACCEL_ZERO_G +
+            ((s32)az * scale) / EGC_ACCELEROMETER_RES_PER_G;
 
-        if (wx < 0) wx = 0;
-        else if (wx > 1023) wx = 1023;
+        if (x < 0) x = 0;
+        else if (x > 1023) x = 1023;
 
-        if (wy < 0) wy = 0;
-        else if (wy > 1023) wy = 1023;
+        if (y < 0) y = 0;
+        else if (y > 1023) y = 1023;
 
-        if (wz < 0) wz = 0;
-        else if (wz > 1023) wz = 1023;
+        if (z < 0) z = 0;
+        else if (z > 1023) z = 1023;
+
+        wx = (u16)x;
+        wy = (u16)y;
+        wz = (u16)z;
 
         fake_wiimote_report_accelerometer(
             wiimote, (u16)wx, (u16)wy, (u16)wz);
