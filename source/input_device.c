@@ -315,9 +315,11 @@ bool input_device_report_input(input_device_t *input_device)
     if (input_device->extension == WIIMOTE_EXT_NONE) {
         fake_wiimote_report_input(wiimote, wiimote_buttons);
     } else if (input_device->extension == WIIMOTE_EXT_NUNCHUK) {
-        bm_map_nunchuk(EGC_GAMEPAD_BUTTON_COUNT, buttons, EGC_GAMEPAD_AXIS_COUNT,
-                       input->gamepad.axes, 0, 0, 0, input_mappings.nunchuk_button_map,
-                       input_mappings.nunchuk_analog_axis_map, &extension_data.nunchuk);
+        bm_map_nunchuk(EGC_GAMEPAD_BUTTON_COUNT, buttons,
+               EGC_GAMEPAD_AXIS_COUNT, input->gamepad.axes,
+               wx, wy, wz, input_mappings.nunchuk_button_map,
+               input_mappings.nunchuk_analog_axis_map,
+               &extension_data.nunchuk);
         fake_wiimote_report_input_ext(wiimote, wiimote_buttons, &extension_data,
                                       sizeof(extension_data.nunchuk));
     } else if (input_device->extension == WIIMOTE_EXT_CLASSIC) {
