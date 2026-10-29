@@ -273,6 +273,8 @@ bool input_device_report_input(input_device_t *input_device)
         const s16 ay = input->gamepad.accelerometer[0].y;
         const s16 az = input->gamepad.accelerometer[0].z;
 
+		LOG_DEBUG("Pro IMU: X=%d Y=%d Z=%d\n", ax, ay, az);
+
         const s32 scale = ACCEL_ONE_G - ACCEL_ZERO_G;
 
         s32 wx = ACCEL_ZERO_G +
