@@ -227,6 +227,9 @@ int input_device_set_rumble(input_device_t *input_device, bool rumble_on)
 bool input_device_report_input(input_device_t *input_device)
 {
     const egc_input_state_t *input = &input_device->device->state;
+	u16 wx = ACCEL_ZERO_G;
+    u16 wy = ACCEL_ZERO_G;
+    u16 wz = ACCEL_ONE_G;
     u32 buttons = input->gamepad.buttons;
     if (input->gamepad.axes[EGC_GAMEPAD_AXIS_LEFT_TRIGGER] > 0)
         buttons |= BIT(EGC_GAMEPAD_BUTTON_LEFT_PADDLE1);
@@ -262,6 +265,9 @@ bool input_device_report_input(input_device_t *input_device)
         bm_map_wiimote(EGC_GAMEPAD_BUTTON_COUNT, buttons,
                        input_mappings.wiimote_button_map, &wiimote_buttons);
     }
+	    u16 wx = ACCEL_ZERO_G;
+        u16 wy = ACCEL_ZERO_G;
+        u16 wz = ACCEL_ONE_G;
 
         if (input_device->device->desc->num_accelerometers > 0) {
         /*
@@ -277,12 +283,12 @@ bool input_device_report_input(input_device_t *input_device)
 
         const s32 scale = ACCEL_ONE_G - ACCEL_ZERO_G;
 
-        s32 wx = ACCEL_ZERO_G +
-            ((s32)ax * scale) / EGC_ACCELEROMETER_RES_PER_G;
-        s32 wy = ACCEL_ZERO_G +
-            ((s32)ay * scale) / EGC_ACCELEROMETER_RES_PER_G;
-        s32 wz = ACCEL_ZERO_G +
-            ((s32)az * scale) / EGC_ACCELEROMETER_RES_PER_G;
+        wx = ACCEL_ZERO_G +
+        ((s32)ax * scale) / EGC_ACCELEROMETER_RES_PER_G;
+       wy = ACCEL_ZERO_G +
+        ((s32)ay * scale) / EGC_ACCELEROMETER_RES_PER_G;
+       wz = ACCEL_ZERO_G +
+        ((s32)az * scale) / EGC_ACCELEROMETER_RES_PER_G;
 
         if (wx < 0) wx = 0;
         else if (wx > 1023) wx = 1023;
