@@ -362,12 +362,23 @@ void fake_wiimote_report_input(fake_wiimote_t *wiimote, u16 buttons)
     }
 }
 
+
 void fake_wiimote_report_accelerometer(fake_wiimote_t *wiimote, u16 acc_x, u16 acc_y, u16 acc_z)
 {
-    wiimote->acc_x = acc_x & 0x3FF;
-    wiimote->acc_y = acc_y & 0x3FF;
-    wiimote->acc_z = acc_z & 0x3FF;
+    acc_x &= 0x3FF;
+    acc_y &= 0x3FF;
+    acc_z &= 0x3FF;
+
+    if (wiimote->acc_x != acc_x ||
+        wiimote->acc_y != acc_y ||
+        wiimote->acc_z != acc_z) {
+        wiimote->acc_x = acc_x;
+        wiimote->acc_y = acc_y;
+        wiimote->acc_z = acc_z;
+        wiimote->input_dirty = true;
+    }
 }
+
 
 void fake_wiimote_report_ir_dots(fake_wiimote_t *wiimote,
                                  struct ir_dot_t ir_dots[static IR_MAX_DOTS])
