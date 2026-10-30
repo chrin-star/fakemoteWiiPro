@@ -20,6 +20,21 @@ jobs:
         with:
           submodules: recursive
 
+
+      - name: Download my EGC fork
+        run: |
+          git -C embedded-game-controller remote set-url origin https://github.com/chrin-star/embedded-game-controller.git
+          git -C embedded-game-controller fetch origin master
+          git -C embedded-game-controller checkout --detach FETCH_HEAD
+
+          echo "EGC version downloaded:"
+          git -C embedded-game-controller log -1 --oneline
+
+          echo "Checking required files:"
+          test -f embedded-game-controller/embedded-game-controller/hid_drivers/nintendo_switch.c
+          test -f embedded-game-controller/embedded-game-controller/backends/ogc.c
+
+
       - name: Inspect EGC directory
         run: |
           echo "Contenido del submódulo:"
