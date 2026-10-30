@@ -19,13 +19,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-      - name: Use EGC with Nintendo Switch USB driver (test only)
-        run: |
-          git -C embedded-game-controller fetch origin bb1b9832d887c3c2ca7ede5e873f525e1fef7d10
-          git -C embedded-game-controller checkout bb1b9832d887c3c2ca7ede5e873f525e1fef7d10
-          git -C embedded-game-controller submodule update --init --recursive
       
-
       - name: Fix unmapped Switch Pro buttons
         run: |
           python3 - <<'PY'
