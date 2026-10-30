@@ -278,30 +278,39 @@ bool input_device_report_input(input_device_t *input_device)
 
 		LOG_DEBUG("Pro IMU: X=%d Y=%d Z=%d\n", ax, ay, az);
 
-        const s32 scale = ACCEL_ONE_G - ACCEL_ZERO_G;
+        
+const s32 scale = ACCEL_ONE_G - ACCEL_ZERO_G;
 
-        s32 x = ACCEL_ZERO_G +
-            ((s32)ax * scale) / EGC_ACCELEROMETER_RES_PER_G;
-        s32 y = ACCEL_ZERO_G +
-            ((s32)ay * scale) / EGC_ACCELEROMETER_RES_PER_G;
-        s32 z = ACCEL_ZERO_G +
-            ((s32)az * scale) / EGC_ACCELEROMETER_RES_PER_G;
+/*
+ * EGC y Wii Remote usan distinto orden de ejes:
+ * EGC X -> Wii Remote X
+ * EGC Z -> Wii Remote Y
+ * EGC Y -> Wii Remote Z
+ */
+s32 x = ACCEL_ZERO_G +
+    ((s32)ax * scale) / EGC_ACCELEROMETER_RES_PER_G;
 
-        if (x < 0) x = 0;
-        else if (x > 1023) x = 1023;
+s32 y = ACCEL_ZERO_G +
+    ((s32)az * scale) / EGC_ACCELEROMETER_RES_PER_G;
 
-        if (y < 0) y = 0;
-        else if (y > 1023) y = 1023;
+s32 z = ACCEL_ZERO_G +
+    ((s32)ay * scale) / EGC_ACCELEROMETER_RES_PER_G;
 
-        if (z < 0) z = 0;
-        else if (z > 1023) z = 1023;
+if (x < 0) x = 0;
+else if (x > 1023) x = 1023;
 
-        wx = (u16)x;
-        wy = (u16)y;
-        wz = (u16)z;
+if (y < 0) y = 0;
+else if (y > 1023) y = 1023;
 
-        fake_wiimote_report_accelerometer(
-            wiimote, (u16)wx, (u16)wy, (u16)wz);
+if (z < 0) z = 0;
+else if (z > 1023) z = 1023;
+
+wx = (u16)x;
+wy = (u16)y;
+wz = (u16)z;
+
+fake_wiimote_report_accelerometer(wiimote, wx, wy, wz);
+
     }
 
     ir_emu_mode = ir_emu_modes[input_device->ir_emu_mode_idx];
