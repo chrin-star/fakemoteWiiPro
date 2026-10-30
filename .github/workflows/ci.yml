@@ -19,6 +19,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Inspect EGC directory
+        run: |
+          echo "Contenido del submódulo:"
+          ls -la embedded-game-controller
+          echo "Buscando archivos del driver:"
+          find embedded-game-controller -name "nintendo_switch.c" -o -name "ogc.c"
       
       - name: Fix unmapped Switch Pro buttons
         run: |
